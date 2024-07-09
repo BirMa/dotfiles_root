@@ -1,0 +1,10 @@
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = firefox
+
+[Action]
+Description = Removing some firefox builtin addons...
+When = PostTransaction
+Exec = /usr/bin/sh -c '/usr/bin/rm -v --one-file-system --preserve-root /usr/lib/firefox/browser/features/webcompat-reporter@mozilla.org.xpi /usr/lib/firefox/browser/features/screenshots@mozilla.org.xpi /usr/lib/firefox/browser/features/webcompat@mozilla.org.xpi /usr/lib/firefox/browser/features/pictureinpicture@mozilla.org.xpi; /usr/bin/echo remaining addons:; /usr/bin/ls /usr/lib/firefox/browser/features/'

@@ -1,0 +1,11 @@
+# TODO - make package that conflicts/provides sound-theme-freedesktop that contains a silent sound.oga file
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = sound-theme-freedesktop
+
+[Action]
+Description = killing freedesktop sound theme...
+When = PostTransaction
+Exec = /usr/bin/mv -fv /usr/share/sounds/freedesktop/stereo /usr/share/sounds/freedesktop/stereo_del

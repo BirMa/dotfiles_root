@@ -1,0 +1,11 @@
+[Trigger]
+Type = Path
+Operation = Upgrade
+Target = usr/lib/modules/*/vmlinuz
+Target = usr/lib/initcpio/*
+
+[Action]
+Description = Backing up boot partition to root fs...
+When = PreTransaction
+Exec = /usr/bin/sh -c '/usr/bin/cp -av /boot/. /boot_mirror/'
+AbortOnFail = true

@@ -1,0 +1,11 @@
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Operation = Remove
+Type = Package
+Target = *
+
+[Action]
+Description = calling xset...
+When = PostTransaction
+Exec = /usr/bin/xset r rate 250 30

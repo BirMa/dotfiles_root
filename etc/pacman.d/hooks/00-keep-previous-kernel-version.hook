@@ -1,0 +1,14 @@
+[Trigger]
+Type = Path
+Operation = Install
+Operation = Upgrade
+Operation = Remove
+Target = usr/lib/modules/*/vmlinuz
+Target = usr/lib/initcpio/*
+Target = boot/*
+
+[Action]
+Description = Keeping previous kernel version...
+When = PreTransaction
+Exec = /usr/bin/sh -c '/usr/bin/cp -av /boot/initramfs-linux{,_previous}.img; /usr/bin/cp -av /boot/vmlinuz-linux{,_previous}'
+AbortOnFail = true
