@@ -1,17 +1,28 @@
 #! /usr/bin/env sh
 
-DATASET="$(zpool get -H bootfs | cut -f1)/root/default"
-SNAPPSHOT_NAME="$DATASET@pre_update_$(/usr/bin/date --utc +%Y-%m-%d-%a_%H:%M:%S)"
-if sudo zfs snapshot "$SNAPPSHOT_NAME"; then
-  echo ":: snapshot created: $SNAPPSHOT_NAME"
-  # TODO - this fails if there is no pre_update_* snapshot
-  if sudo zfs list -t snapshot -H -o name | grep -v "^$SNAPPSHOT_NAME$" | grep "^$DATASET@pre_update_.*" | xargs --max-args=1 sudo zfs destroy; then
-    echo ":: old snapshots destroyed"
-  else
-    echo ":: destruction of old snapshots failed"
-    exit 201
-  fi
-else
-  echo ":: snapshot creation failed: $SNAPPSHOT_NAME"
-fi
+set -o errexit
+set -o nounset
+unalias -a
 
+KEEP_SNAPSHOTS="3"
+SUFFIX="${1:-pre_update}"
+ROOT_DATASET="$(zpool get -H bootfs -o name)/root/default"
+
+rolling_snapshot_create() {
+  date_time=$(date --utc +%Y-%m-%d-%a_%H:%M:%S)
+  snapshot_name="${ROOT_DATASET}@${SUFFIX}_${date_time}"
+  zfs snapshot "$snapshot_name" && echo ":: snapshot created: $snapshot_name"
+}
+
+rolling_snapshot_cleanup() {
+  snapshots_to_delete=$(zfs list -H -t snapshot -o name -s creation "$ROOT_DATASET" | grep "@${SUFFIX}_" | head "--lines=-${KEEP_SNAPSHOTS}")
+  if [ "$snapshots_to_delete" != "" ]; then
+    echo ":: destroying..."
+    echo "$snapshots_to_delete" | xargs --max-args=1 zfs destroy -v
+  else
+    echo ":: no snapshots to destroy"
+  fi
+}
+
+rolling_snapshot_create
+rolling_snapshot_cleanup
