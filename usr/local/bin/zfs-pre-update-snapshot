@@ -4,7 +4,7 @@ set -o errexit
 set -o nounset
 unalias -a
 
-KEEP_SNAPSHOTS="3"
+KEEP_SNAPSHOTS="5"
 SUFFIX="${1:-pre_update}"
 ROOT_DATASET="$(zpool get -H bootfs -o name)/root/default"
 
@@ -24,5 +24,12 @@ rolling_snapshot_cleanup() {
   fi
 }
 
-rolling_snapshot_create
-rolling_snapshot_cleanup
+min_snapshot_delay_s=$(( 15 * 60 ))
+time_since_last_snapshot_s=$(zfs list -t snapshot -p -H -o creation -S creation "$ROOT_DATASET" | head -n1)
+time_since_last_snapshot_s=${time_since_last_snapshot_s:-0}
+if [ $(( $(date  +%s) - time_since_last_snapshot_s )) -gt $min_snapshot_delay_s ]; then
+  rolling_snapshot_create
+  rolling_snapshot_cleanup
+else
+  echo ":: skipping snapshot, last one was too soon"
+fi
