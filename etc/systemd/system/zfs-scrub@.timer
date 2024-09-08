@@ -1,0 +1,11 @@
+[Unit]
+Description=zpool scrub on %i
+
+[Timer]
+# every 1. 17. (33.) of the month...
+OnCalendar=*-*-1/16
+RandomizedDelaySec=1d
+Persistent=true
+
+[Install]
+WantedBy=multi-user.target
