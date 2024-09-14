@@ -4,7 +4,7 @@ set -o errexit
 set -o nounset
 unalias -a
 
-KEEP_SNAPSHOTS="5"
+KEEP_SNAPSHOTS="10"
 SUFFIX="${1:-pre_update}"
 ROOT_DATASET="$(zpool get -H bootfs -o name)/root/default"
 
