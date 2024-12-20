@@ -6,7 +6,7 @@ unalias -a
 
 KEEP_SNAPSHOTS="10"
 SUFFIX="${1:-pre_update}"
-ROOT_DATASET="$(zpool get -H bootfs -o name)/root/default"
+ROOT_DATASET="$(zpool get -H bootfs -o name | grep -v backup)/root/default"
 
 rolling_snapshot_create() {
   date_time=$(date --utc +%Y-%m-%d-%a_%H:%M:%S)
