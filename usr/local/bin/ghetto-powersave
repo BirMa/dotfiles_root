@@ -1,0 +1,12 @@
+#! /usr/bin/env bash
+
+for cpuNrPrefix in /sys/devices/system/cpu/cpu*/cpufreq/; do
+  if [[ "$1" = "enable" ]]; then
+    newMaxFreq=$(cat "$cpuNrPrefix"cpuinfo_min_freq)
+  elif [[ "$1" = "disable" ]]; then
+    newMaxFreq=$(cat "$cpuNrPrefix"cpuinfo_max_freq)
+  else
+    exit 1
+  fi
+  echo "$newMaxFreq" | sudo tee "$cpuNrPrefix"scaling_max_freq
+done
