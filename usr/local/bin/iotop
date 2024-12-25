@@ -1,0 +1,6 @@
+#! /usr/bin/env bash
+
+PREV_VALUE=$(sysctl --values kernel.task_delayacct)
+sysctl kernel.task_delayacct=1
+/usr/bin/iotop
+sysctl kernel.task_delayacct="$PREV_VALUE"
