@@ -8,5 +8,7 @@ for cpuNrPrefix in /sys/devices/system/cpu/cpu*/cpufreq/; do
   else
     newMaxFreq="$1"
   fi
+  prev=$(cat "$cpuNrPrefix"scaling_max_freq)
+  echo -n "$prev -> "
   echo "$newMaxFreq" | sudo tee "$cpuNrPrefix"scaling_max_freq
 done
