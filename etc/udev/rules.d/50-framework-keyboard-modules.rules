@@ -1,0 +1,16 @@
+# Keyboard Module (ANSI) 0x32AC 0x0012
+# RGB Macropad           0x32AC 0x0013
+# Numpad Module          0x32AC 0x0014
+# Keyboard Module (ISO)  0x32AC 0x0018
+# Keyboard Module (JIS)  0x32AC 0x0019
+# LED Matrix             0x32AC 0x0020
+# B1 Display (Experimental prototype, not a product) 0x32AC 0x0021
+# C1 Minimal Microcontroller Module (Template for DIY Module) 0x32AC 0x0022
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="32ac", ATTRS{idProduct}=="0012", TAG+="uaccess"
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="32ac", ATTRS{idProduct}=="0013", TAG+="uaccess"
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="32ac", ATTRS{idProduct}=="0014", TAG+="uaccess"
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="32ac", ATTRS{idProduct}=="0018", TAG+="uaccess"
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="32ac", ATTRS{idProduct}=="0019", TAG+="uaccess"
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="32ac", ATTRS{idProduct}=="0020", TAG+="uaccess"
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="32ac", ATTRS{idProduct}=="0021", TAG+="uaccess"
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="32ac", ATTRS{idProduct}=="0022", TAG+="uaccess"
