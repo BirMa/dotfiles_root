@@ -25,7 +25,7 @@ rolling_snapshot_cleanup() {
 }
 
 min_snapshot_delay_s=$(( 15 * 60 ))
-time_since_last_snapshot_s=$(zfs list -t snapshot -p -H -o creation -S creation "$ROOT_DATASET" | head -n1)
+time_since_last_snapshot_s=$(zfs list -t snapshot -p -H -o name,creation -S creation "$ROOT_DATASET" | awk -F'\t' -v pat="@${SUFFIX}_" 'index($1, pat) { print $2; exit }')
 time_since_last_snapshot_s=${time_since_last_snapshot_s:-0}
 if [ $(( $(date  +%s) - time_since_last_snapshot_s )) -gt $min_snapshot_delay_s ]; then
   rolling_snapshot_create
