@@ -32,8 +32,8 @@ alias dirfzf="find . -type d | fzf"
 alias fzfdir="dirfzf"
 alias cdfzf="cd \"\$(find . -type d | fzf)\""
 alias fzfcd="cdfzf"
-alias res="tput reset"
-alias reset="tput reset"
+# reset without tset's 1s wait on non-pty terminals: line settings + terminal reset sequences
+alias res='stty sane; tput reset'
 alias pstree="pstree -pUl"
 
 # make aliases work with sudo?
