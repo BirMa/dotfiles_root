@@ -1,0 +1,9 @@
+#
+# /etc/zsh/zshrc: read by every interactive zsh
+#
+
+# Load config files from /etc/shrc.d (same as /etc/bash.bashrc does for bash)
+for shrcFile in /etc/shrc.d/*.sh(N); do
+	[[ -r $shrcFile ]] && . $shrcFile
+done
+unset shrcFile
