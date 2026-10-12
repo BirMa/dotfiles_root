@@ -55,7 +55,7 @@ alias jobs="jobs -l"
 # more info like fs, etc.
 #alias lsblk="lsblk -afm"
 #alias lsblk="lsblk -a -o NAME,FSTYPE,LABEL,MOUNTPOINT,SIZE,OWNER,GROUP,MODE,PARTUUID,UUID"
-alias _lsblk_full="lsblk -a -o NAME,FSTYPE,LABEL,MOUNTPOINT,SIZE,OWNER,GROUP,MODE,PARTUUID,UUID,TYPE,HOTPLUG,RM,VENDOR,MODEL,SERIAL"
+alias _lsblk_full="lsblk -a -o NAME,FSTYPE,LABEL,PARTLABEL,MOUNTPOINT,SIZE,OWNER,GROUP,MODE,PARTUUID,UUID,TYPE,HOTPLUG,RM,VENDOR,MODEL,SERIAL"
 alias lsblk="lsblk -a -o NAME,FSTYPE,LABEL,MOUNTPOINT,SIZE,OWNER,GROUP,MODE,TYPE,HOTPLUG,RM,VENDOR,MODEL,SERIAL"
 
 # more useful socket info
@@ -71,6 +71,9 @@ alias rm="rm -Iv --one-file-system"
 
 alias cp="cp -v"
 alias mv="mv -v"
+
+# remind me of the alternatives
+alias sed='printf "use sd!\n\n\n" >&2; /usr/bin/sed'
 
 # make uptime display uptime
 alias uptime="uptime -p"
@@ -112,8 +115,8 @@ alias _iwatchR="inotifywait -r -m -e create -e modify -e move "
 # use inotify to watch for changes in a file
 alias _iwatchF="inotifywait -m "
 
-# tmp untill i remove pacaur
-alias pacaur="echo use yay" # use paru now lol
+# I sometimes forget, update linux, then realize I don't have cache, can't mount cache because the mount exec on disk doesn't like the kernel in memory anymore >.<
+alias paru="n || true; paru " # let's see how badly this goes wrong
 
 # only show 6 results, my terminal is not so large
 alias googler="googler --count 6 "
@@ -139,7 +142,12 @@ alias battop="battop -d 7"
 # -d show hidden files
 alias nnn="nnn -d -e -H -x"
 
-alias e="thunar ."
+alias e="thunar . >/dev/null &"
 
 # shorter this way
 alias g='git'
+
+alias nvidia-settings='nvidia-settings --config="$XDG_CONFIG_HOME"/nvidia/settings'
+alias dosbox='dosbox -conf "$XDG_CONFIG_HOME"/dosbox/dosbox.conf'
+
+alias cargo_dbg_col='RUST_LOG_STYLE=always RUST_BACKTRACE=full RUST_LOG="warn,monitor_collector=warn,monitor_iced::state::state_update=warn" '
