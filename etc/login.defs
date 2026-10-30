@@ -8,7 +8,7 @@
 
 #
 # Delay in seconds before being allowed another attempt after a login failure
-# Note: When PAM is used, some modules may enforce a minimum delay (e.g.
+# Note: when PAM is used, some modules may enforce a minimum delay (e.g.
 #       pam_unix(8) enforces a 2s delay)
 #
 FAIL_DELAY		1
@@ -87,15 +87,12 @@ UMASK		022
 HOME_MODE	0700
 
 #
-# Password aging controls:
+# If "yes", the user must be listed as a member of the first gid 0 group
+# in /etc/group (called "root" on most Linux systems) to be able to "su"
+# to uid 0 accounts.  If the group doesn't exist or is empty, no one
+# will be able to "su" to uid 0.
 #
-#	PASS_MAX_DAYS	Maximum number of days a password may be used.
-#	PASS_MIN_DAYS	Minimum number of days allowed between password changes.
-#	PASS_WARN_AGE	Number of days warning given before a password expires.
-#
-PASS_MAX_DAYS	99999
-PASS_MIN_DAYS	0
-PASS_WARN_AGE	7
+SU_WHEEL_ONLY	no
 
 #
 # Min/max values for automatic uid selection in useradd(8)
@@ -109,6 +106,41 @@ SYS_UID_MAX		  999
 SUB_UID_MIN		   100000
 SUB_UID_MAX		600100000
 SUB_UID_COUNT		    65536
+#
+# If set to yes, subordinate user ID entries in /etc/subuid are stored
+# using the numeric user ID rather than the username.
+#SUB_UID_STORE_BY_UID	no
+
+#
+# Enable deterministic subordinate UID allocation based on the user's UID.
+# When set to "yes", subordinate UID ranges are calculated using a
+# deterministic formula instead of searching for the next free range:
+#
+# WARNING: Do not mix deterministic and linear (default) allocation
+# on the same system or across systems sharing /etc/subuid. Mixing
+# methods will cause subordinate ID range conflicts and overlaps.
+#
+# Default: no
+#
+#SUB_UID_DETERMINISTIC	no
+
+#
+# Allow deterministic subordinate UID calculation to wrap around using
+# modulo arithmetic when a UID would overflow the configured subordinate
+# ID space. Only effective when SUB_UID_DETERMINISTIC is "yes".
+#
+# When disabled (default), any arithmetic overflow is a hard error,
+# ensuring non-overlapping monotonic allocation.
+#
+# WARNING: SECURITY RISK - MAY CAUSE RANGE OVERLAPS AND PRIVILEGE ESCALATION!
+#
+# When enabled (WRAP MODE), the subordinate ID space is treated as a ring
+# buffer. Uses modulo arithmetic to handle overflow. May cause range
+# overlaps between users.
+#
+# Default: no
+#
+#UNSAFE_SUB_UID_DETERMINISTIC_WRAP	no
 
 #
 # Min/max values for automatic gid selection in groupadd(8)
@@ -122,6 +154,41 @@ SYS_GID_MAX		  999
 SUB_GID_MIN		   100000
 SUB_GID_MAX		600100000
 SUB_GID_COUNT		    65536
+#
+# If set to yes, subordinate group ID entries in /etc/subgid are stored
+# using the numeric user ID rather than the username.
+#SUB_GID_STORE_BY_UID	no
+
+#
+# Enable deterministic subordinate GID allocation based on the user's UID.
+# When set to "yes", subordinate GID ranges are calculated using a
+# deterministic formula instead of searching for the next free range:
+#
+# WARNING: Do not mix deterministic and linear (default) allocation
+# on the same system or across systems sharing /etc/subgid. Mixing
+# methods will cause subordinate ID range conflicts and overlaps.
+#
+# Default: no
+#
+#SUB_GID_DETERMINISTIC	no
+
+#
+# Allow deterministic subordinate GID calculation to wrap around using
+# modulo arithmetic when a UID would overflow the configured subordinate
+# ID space. Only effective when SUB_GID_DETERMINISTIC is "yes".
+#
+# When disabled (default), any arithmetic overflow is a hard error,
+# ensuring non-overlapping monotonic allocation.
+#
+# WARNING: SECURITY RISK - MAY CAUSE RANGE OVERLAPS AND PRIVILEGE ESCALATION!
+#
+# When enabled (WRAP MODE), the subordinate ID space is treated as a ring
+# buffer. Uses modulo arithmetic to handle overflow. May cause range
+# overlaps between users.
+#
+# Default: no
+#
+#UNSAFE_SUB_GID_DETERMINISTIC_WRAP      no
 
 #
 # Max number of login(1) retries if password is bad
@@ -134,6 +201,24 @@ LOGIN_RETRIES		5
 LOGIN_TIMEOUT		60
 
 #
+# Maximum number of attempts to change password if rejected (too easy)
+#
+PASS_CHANGE_TRIES	5
+
+#
+# Password strength controls:
+#
+# Warn about weak passwords (but still allow them) if you are root.
+PASS_ALWAYS_WARN	yes
+# Minimum acceptable password length.
+PASS_MIN_LEN	5
+
+#
+# Require password before chfn(1)/chsh(1) can make any changes.
+#
+CHFN_AUTH		yes
+
+#
 # Which fields may be changed by regular users using chfn(1) - use
 # any combination of letters "frwh" (full name, room number, work
 # phone, home phone).  If not defined, no changes are allowed.
@@ -142,14 +227,19 @@ LOGIN_TIMEOUT		60
 CHFN_RESTRICT		rwh
 
 #
+# Password prompt (%s will be replaced by user name).
+#
+# XXX - it doesn't work correctly yet, for now leave it commented out
+# to use the default which is just "Password: ".
+#LOGIN_STRING		"%s's Password: "
+
+#
 # Only works if compiled with ENCRYPTMETHOD_SELECT defined:
 # If set to SHA256, SHA256-based algorithm will be used for encrypting password
 # If set to SHA512, SHA512-based algorithm will be used for encrypting password
 # If set to YESCRYPT, YESCRYPT-based algorithm will be used for encrypting password
-# If set to DES, DES-based algorithm will be used for encrypting password (default)
-# MD5 and DES should not be used for new hashes, see crypt(5) for recommendations.
 #
-# Note: If you use PAM, it is recommended to use a value consistent with
+# Note: if you use PAM, it is recommended to use a value consistent with
 # the PAM modules configuration.
 #
 ENCRYPT_METHOD YESCRYPT
@@ -250,7 +340,7 @@ USERGROUPS_ENAB yes
 # Used in pam_timestamp module to calculate the keyed-hash message
 # authentication code.
 #
-# Note: It is recommended to check hmac(3) to see the possible algorithms
+# Note: it is recommended to check hmac(3) to see the possible algorithms
 # that are available in your system.
 #
 #HMAC_CRYPTO_ALGO SHA512

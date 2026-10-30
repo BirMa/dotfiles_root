@@ -5,6 +5,7 @@
 # This file is sourced by everything you git, don't do this.
 #set -o nounset
 
+# Didn't turn out too well.
 #umask 0077
 
 # amount of parallel jobs (overrides the default from /etc/environment.d/50-global.conf)
