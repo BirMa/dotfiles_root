@@ -15,7 +15,13 @@ rolling_snapshot_create() {
 }
 
 rolling_snapshot_cleanup() {
-  snapshots_to_delete=$(zfs list -H -t snapshot -o name -s creation "$ROOT_DATASET" | grep "@${SUFFIX}_" | head "--lines=-${KEEP_SNAPSHOTS}")
+  # skip held snapshots (e.g. syncoid --use-hold replication base); they're retried on a later run once released
+  snapshots_to_delete=$(
+    zfs list -H -t snapshot -o name,userrefs -s creation "$ROOT_DATASET" |
+      grep "@${SUFFIX}_" |
+      head "--lines=-${KEEP_SNAPSHOTS}" |
+      awk -F'\t' '$2 == 0 { print $1 }'
+    )
   if [ "$snapshots_to_delete" != "" ]; then
     echo ":: destroying..."
     echo "$snapshots_to_delete" | xargs --max-args=1 zfs destroy -v
@@ -25,7 +31,10 @@ rolling_snapshot_cleanup() {
 }
 
 min_snapshot_delay_s=$(( 15 * 60 ))
-time_since_last_snapshot_s=$(zfs list -t snapshot -p -H -o name,creation -S creation "$ROOT_DATASET" | awk -F'\t' -v pat="@${SUFFIX}_" 'index($1, pat) { print $2; exit }')
+time_since_last_snapshot_s=$(
+  zfs list -t snapshot -p -H -o name,creation -S creation "$ROOT_DATASET" |
+    awk -F'\t' -v pat="@${SUFFIX}_" 'index($1, pat) { print $2; exit }'
+  )
 time_since_last_snapshot_s=${time_since_last_snapshot_s:-0}
 if [ $(( $(date  +%s) - time_since_last_snapshot_s )) -gt $min_snapshot_delay_s ]; then
   rolling_snapshot_create
